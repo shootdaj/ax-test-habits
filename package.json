@@ -29,8 +29,7 @@
   "homepage": "https://github.com/shootdaj/ax-test-habits#readme",
   "dependencies": {
     "cors": "^2.8.6",
-    "express": "^4.22.1",
-    "uuid": "^13.0.0"
+    "express": "^4.22.1"
   },
   "devDependencies": {
     "vitest": "^4.0.18"
