@@ -7,10 +7,140 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <div id="app">
-    <h1>Habit Tracker</h1>
-    <p>Loading...</p>
+  <header class="header">
+    <h1>&#x1F525; Habit Tracker</h1>
+    <span class="header-date" id="header-date"></span>
+  </header>
+
+  <div class="container">
+    <!-- Stats Summary -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-today">0</div>
+        <div class="stat-label">Done Today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total Habits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-rate">0%</div>
+        <div class="stat-label">This Week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-best-streak">0</div>
+        <div class="stat-label">Best Streak</div>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs" id="category-tabs">
+      <button class="category-tab active" data-category="all">All</button>
+    </div>
+
+    <!-- Today's Habits -->
+    <h2 class="section-title">&#x1F4CB; Today's Habits</h2>
+    <div class="habits-grid" id="habits-grid"></div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <div class="empty-emoji">&#x1F331;</div>
+      <h3>No habits yet!</h3>
+      <p>Start building great habits. Click the + button to create your first one.</p>
+    </div>
+
+    <!-- Heatmap -->
+    <h2 class="section-title">&#x1F5D3; Weekly Activity</h2>
+    <div class="heatmap-container" id="heatmap-container">
+      <div class="heatmap-grid" id="heatmap-grid"></div>
+    </div>
+
+    <!-- Progress Chart -->
+    <h2 class="section-title">&#x1F4C8; Progress</h2>
+    <div class="chart-container">
+      <canvas id="progress-chart" class="chart-canvas"></canvas>
+    </div>
   </div>
+
+  <!-- Add Habit Button -->
+  <button class="add-habit-btn" id="add-habit-btn" title="Add new habit">+</button>
+
+  <!-- Add/Edit Habit Modal -->
+  <div class="modal-overlay" id="habit-modal">
+    <div class="modal">
+      <h2 id="modal-title">New Habit</h2>
+      <input type="hidden" id="habit-id">
+
+      <div class="form-group">
+        <label for="habit-name">Habit Name</label>
+        <input type="text" id="habit-name" placeholder="e.g., Morning Run">
+      </div>
+
+      <div class="form-group">
+        <label for="habit-frequency">Frequency</label>
+        <select id="habit-frequency">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Color</label>
+        <div class="color-picker-group" id="color-picker">
+          <div class="color-option selected" data-color="#6c5ce7" style="background:#6c5ce7"></div>
+          <div class="color-option" data-color="#00b894" style="background:#00b894"></div>
+          <div class="color-option" data-color="#e17055" style="background:#e17055"></div>
+          <div class="color-option" data-color="#0984e3" style="background:#0984e3"></div>
+          <div class="color-option" data-color="#fdcb6e" style="background:#fdcb6e"></div>
+          <div class="color-option" data-color="#e84393" style="background:#e84393"></div>
+          <div class="color-option" data-color="#2d3436" style="background:#2d3436"></div>
+          <div class="color-option" data-color="#00cec9" style="background:#00cec9"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Icon</label>
+        <div class="emoji-picker-group" id="emoji-picker">
+          <div class="emoji-option selected" data-emoji="&#x1F3AF;">&#x1F3AF;</div>
+          <div class="emoji-option" data-emoji="&#x1F4AA;">&#x1F4AA;</div>
+          <div class="emoji-option" data-emoji="&#x1F4DA;">&#x1F4DA;</div>
+          <div class="emoji-option" data-emoji="&#x1F3C3;">&#x1F3C3;</div>
+          <div class="emoji-option" data-emoji="&#x1F9D8;">&#x1F9D8;</div>
+          <div class="emoji-option" data-emoji="&#x1F4BB;">&#x1F4BB;</div>
+          <div class="emoji-option" data-emoji="&#x2708;&#xFE0F;">&#x2708;&#xFE0F;</div>
+          <div class="emoji-option" data-emoji="&#x1F3B5;">&#x1F3B5;</div>
+          <div class="emoji-option" data-emoji="&#x1F4A7;">&#x1F4A7;</div>
+          <div class="emoji-option" data-emoji="&#x1F34E;">&#x1F34E;</div>
+          <div class="emoji-option" data-emoji="&#x270D;&#xFE0F;">&#x270D;&#xFE0F;</div>
+          <div class="emoji-option" data-emoji="&#x1F6CC;">&#x1F6CC;</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="habit-category">Category</label>
+        <select id="habit-category">
+          <option value="">No Category</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Dialog -->
+  <div class="confirm-overlay" id="confirm-dialog">
+    <div class="confirm-dialog">
+      <p id="confirm-message">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/app.js"></script>
 </body>
 </html>
