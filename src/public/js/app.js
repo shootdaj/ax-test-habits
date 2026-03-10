@@ -89,15 +89,53 @@
       container.innerHTML += `<button class="category-tab ${active}" data-category="${cat.id}">${cat.emoji || ''} ${cat.name}</button>`;
     }
 
+    // Add manage categories button
+    container.innerHTML += '<button class="category-tab" id="manage-categories-btn" style="border-style:dashed;">\u2699\uFE0F Manage</button>';
+
     // Bind tab clicks
     container.querySelectorAll('.category-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        activeCategory = tab.dataset.category;
-        renderCategoryTabs();
-        renderHabits();
-      });
+      if (tab.id === 'manage-categories-btn') {
+        tab.addEventListener('click', openCategoryModal);
+      } else {
+        tab.addEventListener('click', () => {
+          activeCategory = tab.dataset.category;
+          renderCategoryTabs();
+          renderHabits();
+        });
+      }
     });
   }
+
+  function openCategoryModal() {
+    document.getElementById('category-modal').classList.add('active');
+    renderCategoryList();
+  }
+
+  function closeCategoryModal() {
+    document.getElementById('category-modal').classList.remove('active');
+  }
+
+  function renderCategoryList() {
+    const list = document.getElementById('category-list');
+    if (categories.length === 0) {
+      list.innerHTML = '<p style="color:#636e72;font-size:0.9rem;">No categories yet</p>';
+      return;
+    }
+    list.innerHTML = categories.map(cat => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #dfe6e9;">
+        <span>${cat.emoji || '\uD83D\uDCC1'} ${cat.name}</span>
+        <button class="btn btn-secondary" style="padding:4px 12px;font-size:0.8rem;" onclick="deleteCategoryById('${cat.id}')">Delete</button>
+      </div>
+    `).join('');
+  }
+
+  window.deleteCategoryById = async function(id) {
+    await api('DELETE', `/api/categories/${id}`);
+    await loadCategories();
+    renderCategoryList();
+    renderCategoryTabs();
+    await renderHabits();
+  };
 
   async function renderHabits() {
     const grid = document.getElementById('habits-grid');
@@ -464,12 +502,30 @@
     });
     document.getElementById('confirm-cancel').addEventListener('click', closeConfirm);
 
+    // Category management
+    document.getElementById('add-category-btn').addEventListener('click', async () => {
+      const name = document.getElementById('new-category-name').value.trim();
+      if (!name) return;
+      await api('POST', '/api/categories', { name });
+      document.getElementById('new-category-name').value = '';
+      await loadCategories();
+      renderCategoryList();
+      renderCategoryTabs();
+    });
+    document.getElementById('category-modal-close').addEventListener('click', closeCategoryModal);
+    document.getElementById('new-category-name').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') document.getElementById('add-category-btn').click();
+    });
+
     // Close modals on overlay click
     document.getElementById('habit-modal').addEventListener('click', (e) => {
       if (e.target === document.getElementById('habit-modal')) closeModal();
     });
     document.getElementById('confirm-dialog').addEventListener('click', (e) => {
       if (e.target === document.getElementById('confirm-dialog')) closeConfirm();
+    });
+    document.getElementById('category-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('category-modal')) closeCategoryModal();
     });
 
     // Enter key in modal

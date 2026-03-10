@@ -130,6 +130,24 @@
     </div>
   </div>
 
+  <!-- Category Management Modal -->
+  <div class="modal-overlay" id="category-modal">
+    <div class="modal">
+      <h2>Manage Categories</h2>
+      <div class="form-group">
+        <label>Add New Category</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="new-category-name" placeholder="Category name" style="flex:1;">
+          <button class="btn btn-primary" id="add-category-btn">Add</button>
+        </div>
+      </div>
+      <div id="category-list" style="margin-top:16px;"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="category-modal-close">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Confirm Dialog -->
   <div class="confirm-overlay" id="confirm-dialog">
     <div class="confirm-dialog">
